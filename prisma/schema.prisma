@@ -132,6 +132,10 @@ model Person {
   territory      Territory?     @relation(fields: [territoryId], references: [id])
   contactOrigin  String?        @map("contact_origin") @db.VarChar(100)
   notes          String?        @db.Text
+  consentGiven   Boolean        @default(false) @map("consent_given")
+  consentIp      String?        @map("consent_ip") @db.VarChar(45)
+  consentVersion String?        @map("consent_version") @db.VarChar(10)
+  consentAt      DateTime?      @map("consent_at")
   isActive       Boolean        @default(true) @map("is_active")
   createdBy      String?        @map("created_by") @db.Uuid
   creator        User?          @relation("created_by", fields: [createdBy], references: [id])

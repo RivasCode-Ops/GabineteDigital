@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-const ROLE_LEVEL_MIN = 100;
+const ROLE_LEVEL_MIN = 20;
 
 function unauthorized() {
   return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
@@ -16,26 +16,26 @@ export async function GET(
   const session = await auth();
   if (!session?.user) return unauthorized();
 
-  const territory = await prisma.territory.findFirst({
+  const person = await prisma.person.findFirst({
     where: { id, deletedAt: null },
     include: {
-      parent: true,
-      children: {
+      territory: true,
+      demands: {
         where: { deletedAt: null },
-        orderBy: { name: "asc" },
+        orderBy: { createdAt: "desc" },
+        take: 10,
       },
-      _count: { select: { children: true, people: true, demands: true } },
     },
   });
 
-  if (!territory) {
+  if (!person) {
     return NextResponse.json(
-      { error: "Território não encontrado" },
+      { error: "Pessoa não encontrada" },
       { status: 404 }
     );
   }
 
-  return NextResponse.json({ data: territory });
+  return NextResponse.json({ data: person });
 }
 
 export async function PUT(
@@ -48,32 +48,30 @@ export async function PUT(
     return unauthorized();
   }
 
-  const existing = await prisma.territory.findFirst({
+  const existing = await prisma.person.findFirst({
     where: { id, deletedAt: null },
   });
   if (!existing) {
     return NextResponse.json(
-      { error: "Território não encontrado" },
+      { error: "Pessoa não encontrada" },
       { status: 404 }
     );
   }
 
   const body = await req.json();
-  const { name, population, ibgeCode } = body;
+  const { name, phone, email, category, territoryId, contactOrigin, notes } =
+    body;
 
   const updateData: Record<string, unknown> = {};
   if (name) updateData.name = name;
-  if (population !== undefined) updateData.population = population;
-  if (ibgeCode !== undefined) updateData.ibgeCode = ibgeCode;
+  if (phone) updateData.phone = phone;
+  if (email !== undefined) updateData.email = email;
+  if (category) updateData.category = category;
+  if (territoryId !== undefined) updateData.territoryId = territoryId;
+  if (contactOrigin !== undefined) updateData.contactOrigin = contactOrigin;
+  if (notes !== undefined) updateData.notes = notes;
 
-  if (name) {
-    updateData.slug = `${existing.type}-${name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")}`;
-  }
-
-  const territory = await prisma.territory.update({
+  const person = await prisma.person.update({
     where: { id },
     data: updateData,
   });
@@ -82,13 +80,13 @@ export async function PUT(
     data: {
       userId: (session.user as any).id,
       action: "update",
-      entity: "territories",
+      entity: "people",
       entityId: id,
       changes: updateData as any,
     },
   });
 
-  return NextResponse.json({ data: territory });
+  return NextResponse.json({ data: person });
 }
 
 export async function DELETE(
@@ -101,29 +99,17 @@ export async function DELETE(
     return unauthorized();
   }
 
-  const existing = await prisma.territory.findFirst({
+  const existing = await prisma.person.findFirst({
     where: { id, deletedAt: null },
-    include: { _count: { select: { children: true } } },
   });
-
   if (!existing) {
     return NextResponse.json(
-      { error: "Território não encontrado" },
+      { error: "Pessoa não encontrada" },
       { status: 404 }
     );
   }
 
-  if (existing._count.children > 0) {
-    return NextResponse.json(
-      {
-        error:
-          "Não é possível excluir um território que possui filhos ativos",
-      },
-      { status: 409 }
-    );
-  }
-
-  await prisma.territory.update({
+  await prisma.person.update({
     where: { id },
     data: { deletedAt: new Date(), isActive: false },
   });
@@ -132,9 +118,8 @@ export async function DELETE(
     data: {
       userId: (session.user as any).id,
       action: "delete",
-      entity: "territories",
+      entity: "people",
       entityId: id,
-      changes: { deletedAt: new Date().toISOString() },
     },
   });
 
