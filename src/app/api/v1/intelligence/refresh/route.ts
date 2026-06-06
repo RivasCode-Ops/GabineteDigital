@@ -169,6 +169,25 @@ export async function POST() {
 
   await generateAlerts();
 
+  const alertCount = await prisma.alert.count({ where: { resolvedAt: null } });
+  if (alertCount > 0) {
+    const adminUsers = await prisma.user.findMany({
+      where: { deletedAt: null, isActive: true, role: { level: { gte: 60 } } },
+      select: { id: true },
+    });
+    for (const u of adminUsers) {
+      await prisma.notification.create({
+        data: {
+          userId: u.id,
+          title: `${alertCount} alerta${alertCount > 1 ? "s" : ""} ativo${alertCount > 1 ? "s" : ""}`,
+          message: `${alertCount} alerta${alertCount > 1 ? "s" : ""} gerado${alertCount > 1 ? "s" : ""} após atualização de indicadores`,
+          type: alertCount > 5 ? "CRITICAL" : "WARNING",
+          link: "/war-room",
+        },
+      });
+    }
+  }
+
   const allMetrics = await prisma.territoryMetric.findMany({
     orderBy: { score: "desc" },
     include: { territory: { select: { id: true, name: true, type: true } } },

@@ -1,6 +1,7 @@
 import { auth, signOut } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { NotificationBell } from "@/components/notification-bell";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard" },
@@ -13,6 +14,8 @@ const navItems = [
   { label: "Pesquisas", href: "/surveys" },
   { label: "Inteligência", href: "/intelligence" },
   { label: "War Room", href: "/war-room" },
+  { label: "Templates", href: "/templates" },
+  { label: "Fila", href: "/message-queue" },
 ];
 
 export default async function DashboardLayout({
@@ -74,7 +77,9 @@ export default async function DashboardLayout({
             <div className="text-sm text-gray-500">
               <span className="text-gray-900 font-medium">Dashboard</span>
             </div>
-            <form
+            <div className="flex items-center gap-3">
+              <NotificationBell />
+              <form
               action={async () => {
                 "use server";
                 await signOut();
@@ -87,6 +92,7 @@ export default async function DashboardLayout({
                 Sair
               </button>
             </form>
+            </div>
           </div>
         </header>
 
