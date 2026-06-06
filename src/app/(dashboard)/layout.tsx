@@ -2,6 +2,7 @@ import { auth, signOut } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { NotificationBell } from "@/components/notification-bell";
+import { FeedbackButton } from "@/components/feedback-button";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard" },
@@ -99,6 +100,7 @@ export default async function DashboardLayout({
         </header>
 
         <main className="flex-1 p-6">{children}</main>
+        <FeedbackButton />
       </div>
     </div>
   );
