@@ -52,6 +52,7 @@ model User {
   activities          Activity[]
   createdEvents       Event[]   @relation("event_creator")
   surveys             Survey[]
+  notifications       Notification[]
 
   @@map("users")
 }
@@ -103,6 +104,8 @@ model Territory {
   events      Event[]
   surveys     Survey[]
   leaderships Leadership[]
+  metrics     TerritoryMetric?
+  alerts      Alert[]
 
   @@index([parentId])
   @@index([type])
@@ -132,6 +135,10 @@ model Person {
   territory      Territory?     @relation(fields: [territoryId], references: [id])
   contactOrigin  String?        @map("contact_origin") @db.VarChar(100)
   notes          String?        @db.Text
+  consentGiven   Boolean        @default(false) @map("consent_given")
+  consentIp      String?        @map("consent_ip") @db.VarChar(45)
+  consentVersion String?        @map("consent_version") @db.VarChar(10)
+  consentAt      DateTime?      @map("consent_at")
   isActive       Boolean        @default(true) @map("is_active")
   createdBy      String?        @map("created_by") @db.Uuid
   creator        User?          @relation("created_by", fields: [createdBy], references: [id])
@@ -181,6 +188,7 @@ enum DemandStatus {
   acompanhamento
   resolvida
   encerrada
+  arquivada
 }
 
 enum DemandCategory {
@@ -398,4 +406,117 @@ model SurveyQuestion {
 
   @@index([surveyId])
   @@map("survey_questions")
+}
+
+model TerritoryMetric {
+  id              String   @id @default(uuid()) @db.Uuid
+  territoryId     String   @unique @map("territory_id") @db.Uuid
+  territory       Territory @relation(fields: [territoryId], references: [id])
+  peopleCount     Int      @default(0) @map("people_count")
+  leadersCount    Int      @default(0) @map("leaders_count")
+  demandsCount    Int      @default(0) @map("demands_count")
+  openDemands     Int      @default(0) @map("open_demands")
+  resolvedDemands Int      @default(0) @map("resolved_demands")
+  activitiesCount Int      @default(0) @map("activities_count")
+  eventsCount     Int      @default(0) @map("events_count")
+  surveysCount    Int      @default(0) @map("surveys_count")
+  lastActivityAt  DateTime? @map("last_activity_at")
+  score           Int      @default(0)
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([score])
+  @@index([territoryId])
+  @@map("territory_metrics")
+}
+
+enum AlertType {
+  TERRITORIO_SEM_VISITA
+  DEMANDA_ATRASADA
+  LIDERANCA_INATIVA
+  SEM_PESQUISA
+  SEM_EVENTO
+}
+
+enum AlertSeverity {
+  baixo
+  medio
+  alto
+  critico
+}
+
+model Alert {
+  id          String       @id @default(uuid()) @db.Uuid
+  territoryId String?      @map("territory_id") @db.Uuid
+  territory   Territory?   @relation(fields: [territoryId], references: [id])
+  type        AlertType
+  severity    AlertSeverity
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  metadata    Json?        @db.JsonB
+  resolvedAt  DateTime?    @map("resolved_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  @@index([territoryId])
+  @@index([type])
+  @@index([severity])
+  @@index([resolvedAt])
+  @@map("alerts")
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  CRITICAL
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  user      User             @relation(fields: [userId], references: [id])
+  title     String           @db.VarChar(255)
+  message   String?          @db.Text
+  type      NotificationType @default(INFO)
+  readAt    DateTime?        @map("read_at")
+  link      String?          @db.VarChar(500)
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model MessageTemplate {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @db.VarChar(100)
+  subject   String   @db.VarChar(255)
+  body      String   @db.Text
+  variables Json?    @db.JsonB
+  queueItems MessageQueue[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@map("message_templates")
+}
+
+enum QueueStatus {
+  pending
+  sent
+  failed
+}
+
+model MessageQueue {
+  id         String           @id @default(uuid()) @db.Uuid
+  templateId String?          @map("template_id") @db.Uuid
+  template   MessageTemplate? @relation(fields: [templateId], references: [id])
+  recipient  String           @db.VarChar(255)
+  channel    String           @db.VarChar(50)
+  subject    String?          @db.VarChar(255)
+  body       String?          @db.Text
+  status     QueueStatus      @default(pending)
+  sentAt     DateTime?        @map("sent_at")
+  error      String?          @db.Text
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  @@index([status])
+  @@map("message_queue")
 }
