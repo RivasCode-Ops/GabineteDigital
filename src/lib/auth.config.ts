@@ -61,6 +61,9 @@ export const authConfig = {
       const isLoggedIn = !!session?.user;
       const isLoginPage = nextUrl.pathname === "/login";
       const isApiAuth = nextUrl.pathname.startsWith("/api/auth");
+      const isHealth = nextUrl.pathname.startsWith("/api/v1/health");
+
+      if (isHealth) return true;
 
       if (!isLoggedIn && !isLoginPage && !isApiAuth) return false;
       if (isLoggedIn && isLoginPage) {
