@@ -17,6 +17,7 @@ const navItems = [
   { label: "Templates", href: "/templates" },
   { label: "Fila", href: "/message-queue" },
   { label: "IA", href: "/ai" },
+  { label: "Admin", href: "/admin" },
 ];
 
 export default async function DashboardLayout({

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "./prisma";
 import { authConfig } from "./auth.config";
+import { createAuditLog } from "./audit";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -34,13 +35,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           data: { lastLoginAt: new Date() },
         });
 
-        await prisma.auditLog.create({
-          data: {
-            userId: user.id,
-            action: "login",
-            entity: "users",
-            entityId: user.id,
-          },
+        await createAuditLog({
+          userId: user.id,
+          action: "LOGIN",
+          entity: "user",
+          entityId: user.id,
+          description: `Login: ${user.email}`,
         });
 
         return {
