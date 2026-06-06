@@ -16,6 +16,7 @@ const navItems = [
   { label: "War Room", href: "/war-room" },
   { label: "Templates", href: "/templates" },
   { label: "Fila", href: "/message-queue" },
+  { label: "IA", href: "/ai" },
 ];
 
 export default async function DashboardLayout({
