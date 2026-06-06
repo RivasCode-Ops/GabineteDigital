@@ -1,0 +1,467 @@
+# BRIEFING OFICIAL
+
+# COMANDO 360 – Gestão Política, Relacionamento Comunitário e Inteligência Territorial
+
+## Versão 1.0 – Arquitetura Estratégica
+
+---
+
+# VISÃO DO PRODUTO
+
+O COMANDO 360 é uma plataforma SaaS multiusuário desenvolvida para organizar operações políticas, relacionamento comunitário, gestão de demandas, coordenação territorial e inteligência operacional.
+
+O sistema atende:
+
+* Campanhas eleitorais
+* Gabinetes parlamentares
+* Mandatos
+* Associações
+* Movimentos comunitários
+* Equipes de coordenação regional
+
+O objetivo é substituir a dependência de:
+
+* WhatsApp
+* Planilhas
+* Cadernos
+* Grupos dispersos
+* Memória dos coordenadores
+
+por um ambiente centralizado, auditável e escalável.
+
+---
+
+# PROBLEMA QUE O SISTEMA RESOLVE
+
+Atualmente as informações ficam espalhadas entre:
+
+* Conversas de WhatsApp
+* Ligações
+* Anotações
+* Planilhas
+* Equipes descentralizadas
+
+Consequências:
+
+* Demandas esquecidas
+* Duplicidade de trabalho
+* Falta de acompanhamento
+* Perda de histórico
+* Falta de indicadores
+* Dificuldade de coordenação territorial
+
+---
+
+# PROPOSTA DE VALOR
+
+Transformar relacionamento político e comunitário em uma operação organizada, mensurável e orientada por dados.
+
+---
+
+# CONCEITO CENTRAL
+
+O sistema não é construído em torno de "eleitores".
+
+O sistema é construído em torno de:
+
+## TERRITÓRIOS
+
+Cada território possui:
+
+* Pessoas
+* Lideranças
+* Demandas
+* Eventos
+* Pesquisas
+* Atividades
+* Indicadores
+
+Estrutura:
+
+```text
+Estado
+ └─ Região
+     └─ Município
+         └─ Bairro
+             └─ Comunidade
+```
+
+---
+
+# PILAR 01 – TERRITÓRIOS
+
+Objetivo:
+
+Organizar toda operação geograficamente.
+
+Cadastro de:
+
+* Estado
+* Região
+* Município
+* Bairro
+* Comunidade
+
+Indicadores por território:
+
+* Demandas
+* Lideranças
+* Atividades
+* Pesquisas
+* Eventos
+
+---
+
+# PILAR 02 – PESSOAS
+
+Cadastro unificado.
+
+Tipos:
+
+* Liderança
+* Morador
+* Empresário
+* Vereador
+* Ex-vereador
+* Presidente de associação
+* Sindicato
+* Influenciador
+* Parceiro institucional
+
+Campos:
+
+* Nome
+* Telefone
+* E-mail
+* Território
+* Categoria
+* Origem do contato
+* Observações
+
+Não armazenar:
+
+* CPF
+* Título eleitoral
+* Zona eleitoral
+* Seção eleitoral
+
+---
+
+# PILAR 03 – REDE DE LIDERANÇAS
+
+Organização hierárquica.
+
+Exemplo:
+
+```text
+Coordenação Estadual
+
+├─ Coordenação Regional
+
+│   ├─ Coordenação Municipal
+
+│   │   ├─ Liderança Comunitária
+
+│   │   └─ Rede Local
+```
+
+Indicadores:
+
+* Atividade
+* Participação
+* Mobilização
+* Eventos realizados
+* Demandas encaminhadas
+
+---
+
+# PILAR 04 – GESTÃO DE DEMANDAS
+
+Registro e acompanhamento.
+
+Exemplos:
+
+* Saúde
+* Educação
+* Infraestrutura
+* Transporte
+* Agricultura
+* Assistência Social
+* Regularização Fundiária
+
+Pipeline:
+
+```text
+Recebida
+↓
+Triagem
+↓
+Encaminhada
+↓
+Acompanhamento
+↓
+Resolvida
+↓
+Encerrada
+```
+
+---
+
+# PILAR 05 – AGENDA
+
+Controle de:
+
+* Reuniões
+* Eventos
+* Audiências
+* Viagens
+* Visitas
+* Entrevistas
+
+Visualizações:
+
+* Diário
+* Semanal
+* Mensal
+
+---
+
+# PILAR 06 – ATIVIDADES
+
+Registro operacional.
+
+Tipos:
+
+* Visita
+* Reunião
+* Evento
+* Ligação
+* Atendimento
+
+Objetivo:
+
+Criar histórico completo das ações realizadas.
+
+---
+
+# PILAR 07 – PESQUISA DE CAMPO
+
+Objetivo:
+
+Capturar informações territoriais.
+
+Coleta:
+
+* Município
+* Bairro
+* Comunidade
+* Problemas locais
+* Prioridades
+* Sentimento comunitário
+
+Classificações:
+
+* Muito favorável
+* Favorável
+* Neutro
+* Resistente
+* Muito resistente
+
+As pesquisas alimentam:
+
+* Demandas
+* Indicadores
+* Inteligência Territorial
+
+---
+
+# PILAR 08 – DASHBOARD
+
+Indicadores em tempo real.
+
+Exemplos:
+
+* Demandas abertas
+* Demandas resolvidas
+* Municípios ativos
+* Atividades realizadas
+* Lideranças ativas
+* Pesquisas realizadas
+
+---
+
+# PILAR 09 – INTELIGÊNCIA TERRITORIAL
+
+Análise dos territórios.
+
+Identificar:
+
+* Regiões sem atuação
+* Demandas recorrentes
+* Crescimento de atividades
+* Cobertura territorial
+* Áreas prioritárias
+
+---
+
+# PILAR 10 – WAR ROOM
+
+Centro de comando.
+
+Tela única contendo:
+
+* Agenda
+* Demandas
+* Indicadores
+* Territórios
+* Atividades
+* Pesquisas
+* Alertas
+
+Objetivo:
+
+Dar visão executiva da operação.
+
+---
+
+# PILAR 11 – COMUNICAÇÃO
+
+Integrações futuras:
+
+* WhatsApp Business
+* E-mail
+* Notificações
+
+Sempre respeitando:
+
+* LGPD
+* Normas eleitorais aplicáveis
+
+---
+
+# PILAR 12 – IA ESTRATÉGICA
+
+Fase avançada.
+
+Capacidades:
+
+* Resumo de atividades
+* Relatórios automáticos
+* Alertas operacionais
+* Identificação de gargalos
+* Sugestões de atuação territorial
+
+---
+
+# GOVERNANÇA E LGPD
+
+Implementar:
+
+* Controle de consentimento
+* Registro da origem dos dados
+* Auditoria
+* Exclusão de registros
+* Histórico de alterações
+* Controle de acesso por perfil
+
+---
+
+# PERFIS DE ACESSO
+
+```text
+ADMIN
+
+COORDENADOR_GERAL
+
+COORDENADOR_REGIONAL
+
+COORDENADOR_MUNICIPAL
+
+LIDERANCA
+
+OPERADOR
+```
+
+---
+
+# MVP (VERSÃO INICIAL)
+
+Escopo inicial:
+
+✅ Login
+
+✅ Perfis
+
+✅ Territórios
+
+✅ Pessoas
+
+✅ Demandas
+
+✅ Agenda
+
+✅ Atividades
+
+✅ Dashboard básico
+
+---
+
+# ROADMAP
+
+### Fase 01
+
+Fundação técnica
+
+### Fase 02
+
+Territórios
+
+### Fase 03
+
+Pessoas
+
+### Fase 04
+
+Lideranças
+
+### Fase 05
+
+Demandas
+
+### Fase 06
+
+Agenda
+
+### Fase 07
+
+Atividades
+
+### Fase 08
+
+Pesquisa de Campo
+
+### Fase 09
+
+Inteligência Territorial
+
+### Fase 10
+
+War Room
+
+### Fase 11
+
+Comunicação
+
+### Fase 12
+
+IA Estratégica
+
+---
+
+# POSICIONAMENTO COMERCIAL
+
+**COMANDO 360**
+
+*"A plataforma de gestão territorial, relacionamento comunitário e inteligência operacional para campanhas, mandatos e gabinetes."*
+
+Essa versão já está alinhada para ser usada como documento mestre do projeto no GitHub, no Cursor e como referência para arquitetura, desenvolvimento e futuras propostas comerciais.

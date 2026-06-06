@@ -1,0 +1,370 @@
+Pela dimensão do projeto, eu não dividiria em apenas 3 fases. Isso costuma gerar retrabalho. Também não faria 20 fases, porque a execução fica lenta.
+
+Eu estruturaria em **12 fases controladas**, cada uma entregando algo utilizável.
+
+# Roadmap Oficial — Gabinete Digital
+
+**Repositório**
+`https://github.com/RivasCode-Ops/GabineteDigital`
+
+**Workspace**
+`D:\PROJETOS\Gabinete Digital`
+
+---
+
+# FASE 01 — Fundação do Sistema
+
+Objetivo:
+
+Criar a base técnica do produto.
+
+Entregas:
+
+* Next.js
+* TypeScript
+* Tailwind
+* Shadcn
+* Prisma
+* PostgreSQL
+* Docker
+* Estrutura de pastas
+* Variáveis de ambiente
+* Sistema de autenticação
+* Controle de perfis
+* Auditoria básica
+
+Resultado:
+
+Sistema abre.
+
+Login funciona.
+
+Perfis funcionam.
+
+Nada de negócio ainda.
+
+---
+
+# FASE 02 — Territórios
+
+Entregas:
+
+* Estado
+* Região
+* Município
+* Bairro
+* Comunidade
+
+Árvore territorial.
+
+---
+
+# FASE 03 — Pessoas
+
+Entregas:
+
+* Cadastro unificado
+* Categorias
+* Busca
+* Filtros
+* Histórico
+
+---
+
+# FASE 04 — Lideranças
+
+Entregas:
+
+* Hierarquia
+* Relacionamentos
+* Influência
+* Indicadores
+
+---
+
+# FASE 05 — Demandas
+
+Entregas:
+
+* Kanban
+* Fluxos
+* Responsáveis
+* Histórico
+
+Primeiro módulo realmente operacional.
+
+---
+
+# FASE 06 — Agenda
+
+Entregas:
+
+* Calendário
+* Eventos
+* Reuniões
+* Visitas
+
+---
+
+# FASE 07 — Atividades
+
+Entregas:
+
+* Visitas
+* Ligações
+* Eventos
+* Reuniões
+
+Timeline.
+
+---
+
+# FASE 08 — Pesquisa de Campo
+
+Entregas:
+
+* Formulários
+* Questionários
+* Coletas
+* Relatórios
+
+---
+
+# FASE 09 — Inteligência Territorial
+
+Entregas:
+
+* Mapa
+* Heatmap
+* Indicadores
+
+---
+
+# FASE 10 — War Room
+
+Entregas:
+
+* Dashboard operacional
+* Visão executiva
+
+---
+
+# FASE 11 — Comunicação
+
+Entregas:
+
+* WhatsApp
+* Email
+* Notificações
+
+Dentro das regras da LGPD.
+
+---
+
+# FASE 12 — IA Estratégica
+
+Entregas:
+
+* Resumos
+* Insights
+* Assistente
+
+---
+
+# PRIMEIRA COPY PARA CODAR
+
+Essa seria exatamente a tarefa que eu entregaria para o Cursor.
+
+---
+
+## FASE 01 — FUNDAÇÃO
+
+### Objetivo
+
+Construir a fundação técnica do projeto Gabinete Digital.
+
+O sistema será uma plataforma SaaS multiusuário de gestão política, relacionamento comunitário, demandas, territórios e inteligência territorial.
+
+Nesta fase não implementar regras de negócio.
+
+Implementar apenas a infraestrutura base.
+
+---
+
+### Stack Obrigatória
+
+Frontend:
+
+* Next.js 15 App Router
+* TypeScript
+* Tailwind CSS
+* Shadcn/UI
+* React Hook Form
+* Zod
+
+Backend:
+
+* API Routes Next.js
+* Prisma ORM
+* PostgreSQL
+
+Infra:
+
+* Docker
+* Docker Compose
+
+Autenticação:
+
+* Auth.js
+* JWT
+* Refresh Token
+
+---
+
+### Estrutura de Pastas
+
+```text
+src/
+
+app/
+
+components/
+
+features/
+
+lib/
+
+server/
+
+types/
+
+hooks/
+
+providers/
+```
+
+---
+
+### Perfis
+
+Criar:
+
+```text
+ADMIN
+
+COORDENADOR_GERAL
+
+COORDENADOR_REGIONAL
+
+COORDENADOR_MUNICIPAL
+
+LIDERANCA
+
+OPERADOR
+```
+
+---
+
+### Banco de Dados
+
+Criar tabelas:
+
+```text
+users
+
+roles
+
+audit_logs
+```
+
+---
+
+### Login
+
+Implementar:
+
+* Login
+* Logout
+* Recuperação de senha
+* Proteção de rotas
+
+---
+
+### Auditoria
+
+Registrar:
+
+* Login
+* Logout
+* Alterações futuras
+
+Tabela:
+
+```text
+audit_logs
+```
+
+Campos:
+
+```text
+user_id
+
+action
+
+entity
+
+entity_id
+
+ip
+
+created_at
+```
+
+---
+
+### Dashboard Inicial
+
+Criar dashboard provisório contendo:
+
+Cards:
+
+* Usuários
+* Perfis
+* Logs
+
+Dados mockados.
+
+---
+
+### Docker
+
+Criar:
+
+```text
+docker-compose.yml
+```
+
+Com:
+
+* PostgreSQL
+* PgAdmin
+
+---
+
+### Critério de Aceite
+
+O sistema deve:
+
+✅ Subir localmente.
+
+✅ Criar banco automaticamente.
+
+✅ Permitir login.
+
+✅ Possuir perfis.
+
+✅ Possuir dashboard protegido.
+
+✅ Registrar logs de acesso.
+
+Quando essa fase estiver concluída e estável, iniciar Fase 02 — Territórios.
