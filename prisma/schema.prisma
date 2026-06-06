@@ -185,6 +185,7 @@ enum DemandStatus {
   acompanhamento
   resolvida
   encerrada
+  arquivada
 }
 
 enum DemandCategory {
