@@ -11,6 +11,7 @@ const navItems = [
   { label: "Atividades", href: "/activities" },
   { label: "Agenda", href: "/agenda" },
   { label: "Pesquisas", href: "/surveys" },
+  { label: "Inteligência", href: "/intelligence" },
 ];
 
 export default async function DashboardLayout({

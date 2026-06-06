@@ -103,6 +103,8 @@ model Territory {
   events      Event[]
   surveys     Survey[]
   leaderships Leadership[]
+  metrics     TerritoryMetric?
+  alerts      Alert[]
 
   @@index([parentId])
   @@index([type])
@@ -403,4 +405,59 @@ model SurveyQuestion {
 
   @@index([surveyId])
   @@map("survey_questions")
+}
+
+model TerritoryMetric {
+  id              String   @id @default(uuid()) @db.Uuid
+  territoryId     String   @unique @map("territory_id") @db.Uuid
+  territory       Territory @relation(fields: [territoryId], references: [id])
+  peopleCount     Int      @default(0) @map("people_count")
+  leadersCount    Int      @default(0) @map("leaders_count")
+  demandsCount    Int      @default(0) @map("demands_count")
+  openDemands     Int      @default(0) @map("open_demands")
+  resolvedDemands Int      @default(0) @map("resolved_demands")
+  activitiesCount Int      @default(0) @map("activities_count")
+  eventsCount     Int      @default(0) @map("events_count")
+  surveysCount    Int      @default(0) @map("surveys_count")
+  lastActivityAt  DateTime? @map("last_activity_at")
+  score           Int      @default(0)
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([score])
+  @@index([territoryId])
+  @@map("territory_metrics")
+}
+
+enum AlertType {
+  TERRITORIO_SEM_VISITA
+  DEMANDA_ATRASADA
+  LIDERANCA_INATIVA
+  SEM_PESQUISA
+  SEM_EVENTO
+}
+
+enum AlertSeverity {
+  baixo
+  medio
+  alto
+  critico
+}
+
+model Alert {
+  id          String       @id @default(uuid()) @db.Uuid
+  territoryId String?      @map("territory_id") @db.Uuid
+  territory   Territory?   @relation(fields: [territoryId], references: [id])
+  type        AlertType
+  severity    AlertSeverity
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  metadata    Json?        @db.JsonB
+  resolvedAt  DateTime?    @map("resolved_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  @@index([territoryId])
+  @@index([type])
+  @@index([severity])
+  @@index([resolvedAt])
+  @@map("alerts")
 }
