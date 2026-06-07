@@ -1,73 +1,54 @@
-# Deploy — Gabinete Digital em gadion.com.br
+# Deploy — Gabinete Digital
+
+## Estratégia em 3 fases
+
+```
+Fase 1 — Teste por IP (porta 3000, sem SSL)
+Fase 2 — Subdomínio em domínio existente (Cloudflare + SSL)
+Fase 3 — Domínio próprio (gadion.com.br ou outro, após piloto)
+```
+
+---
 
 ## Informações
 
 | Item | Valor |
 |---|---|
-| Domínio | `app.gadion.com.br` |
 | VPS | Contabo, Ubuntu 22.04 |
-| Repositório | Público (git clone sem senha) |
-| Conflito | Verificar se porta 80/443 já está ocupada |
+| Repositório | Público |
+| Usuário SSH | root (ou seu usuário) |
 
 ---
 
-## 1. DNS (Cloudflare)
+## Fase 1 — Teste por IP
 
-Criar registro **A**:
-
-```
-app.gadion.com.br → IP_DA_VPS
-```
-
-SSL/TLS: **Full (Strict)**
-
----
-
-## 2. Acessar VPS
+### 1. Acessar VPS
 
 ```bash
 ssh root@IP_DA_VPS
 ```
 
----
-
-## 3. Atualizar sistema
+### 2. Atualizar sistema
 
 ```bash
 apt update && apt upgrade -y
 ```
 
----
-
-## 4. Verificar conflito de portas
-
-```bash
-ss -tlnp | grep -E ':(80|443) '
-```
-
-Se retornar algo, existe um serviço usando porta 80/443. Anote qual é.
-
----
-
-## 5. Instalar Docker
+### 3. Instalar Docker
 
 ```bash
 curl -fsSL https://get.docker.com | sh
 docker --version
 ```
 
----
-
-## 6. Instalar Docker Compose
+### 4. Instalar Docker Compose
 
 ```bash
 apt install docker-compose-plugin -y
 docker compose version
 ```
 
----
-
-## 7. Criar diretório e clonar
+### 5. Clonar repositório
 
 ```bash
 mkdir -p /opt/gabinete-digital
@@ -75,94 +56,51 @@ cd /opt/gabinete-digital
 git clone https://github.com/RivasCode-Ops/GabineteDigital.git .
 ```
 
----
-
-## 8. Criar .env
+### 6. Criar .env
 
 ```bash
 nano .env
 ```
 
-Conteúdo:
-
 ```env
-DOMAIN=gadion.com.br
+DOMAIN=IP_DA_VPS
 DATABASE_URL=postgresql://gabinete:SENHA_AQUI@db:5432/gabinete_digital
 AUTH_SECRET=$(openssl rand -base64 32)
-AUTH_URL=https://app.gadion.com.br
+AUTH_URL=http://IP_DA_VPS:3000
 DB_USER=gabinete
 DB_PASS=SENHA_AQUI
 DB_NAME=gabinete_digital
 LOG_LEVEL=info
 ```
 
-> `SENHA_AQUI` — escolha uma senha forte. `AUTH_SECRET` — o comando `openssl` gera uma.
-
----
-
-## 9. Gerar certificado SSL
-
-Cloudflare → SSL/TLS → Origin Server → Create Certificate
-
-Baixar:
-
-```
-cert.pem → /opt/gabinete-digital/nginx/ssl/cert.pem
-key.pem  → /opt/gabinete-digital/nginx/ssl/key.pem
-```
-
----
-
-## 10. IPs Cloudflare
-
-```bash
-bash /opt/gabinete-digital/scripts/update-cloudflare-ips.sh
-```
-
----
-
-## 11. Subir containers
+### 7. Subir containers
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d
-```
-
-Aguardar ~30s:
-
-```bash
 docker ps
 ```
 
-Deverá ver 4 containers: `gabinete-app`, `gabinete-db`, `gabinete-nginx`, `gabinete-backup`.
-
----
-
-## 12. Migrations
+### 8. Migrations
 
 ```bash
 docker exec gabinete-app npx prisma migrate deploy
 ```
 
----
-
-## 13. Seed (admin)
+### 9. Seed (admin)
 
 ```bash
 docker exec gabinete-app npx prisma db seed
 ```
 
-Admin padrão:
+### 10. Testar
 
 ```
+http://IP_DA_VPS:3000
 Login: admin@gabinete.com
 Senha: admin123
 ```
 
-**Altere a senha no primeiro login.**
-
----
-
-## 14. Verificar health
+### 11. Verificar health
 
 ```bash
 curl http://localhost:3000/api/v1/health
@@ -172,54 +110,125 @@ curl http://localhost:3000/api/v1/health/ready
 
 ---
 
-## 15. Testar pelo navegador
+## Fase 2 — Subdomínio (Cloudflare + SSL)
+
+### Pré-requisitos
+
+- Domínio existente (ex: executeempreendimentos.com.br)
+- Cloudflare apontando para esse domínio
+- Registro A: `app.executeempreendimentos.com.br → IP_DA_VPS`
+
+### 12. Configurar .env
+
+```bash
+nano .env
+```
+
+```env
+DOMAIN=app.executeempreendimentos.com.br
+DATABASE_URL=postgresql://gabinete:SENHA_AQUI@db:5432/gabinete_digital
+AUTH_SECRET=$(openssl rand -base64 32)
+AUTH_URL=https://app.executeempreendimentos.com.br
+DB_USER=gabinete
+DB_PASS=SENHA_AQUI
+DB_NAME=gabinete_digital
+LOG_LEVEL=info
+```
+
+### 13. Gerar certificado SSL (Cloudflare Origin CA)
+
+Cloudflare → SSL/TLS → Origin Server → Create Certificate
+
+Permissão: `app.executeempreendimentos.com.br`
+
+Salvar:
 
 ```
-https://app.gadion.com.br
+cert.pem → nginx/ssl/cert.pem
+key.pem  → nginx/ssl/key.pem
 ```
 
----
+### 14. Ativar SSL no nginx
 
-## 16. Backup de verificação
+Editar `nginx/nginx.conf` — descomentar o bloco `server :443`:
+
+```bash
+nano nginx/nginx.conf
+```
+
+Remover as `# ` do início de cada linha do bloco SSL.
+
+### 15. Reiniciar nginx
+
+```bash
+docker compose -f docker-compose.prod.yml restart nginx
+```
+
+### 16. Verificar SSL
+
+```
+https://app.executeempreendimentos.com.br
+```
+
+Cloudflare → SSL/TLS: **Full (Strict)**
+
+### 17. Backup de verificação
 
 ```bash
 docker exec gabinete-backup sh /usr/local/bin/backup.sh
-ls -la /opt/gabinete-digital/backups/
+ls -la backups/
 ```
 
 ---
 
-## Checklist Final
+## Fase 3 — Domínio próprio (pós-piloto)
 
-```
-✅ app.gadion.com.br → DNS apontado
-✅ Cloudflare Full (Strict)
-✅ Ubuntu 22.04 atualizado
-✅ Docker + Compose instalados
-✅ Projeto clonado
-✅ .env criado
-✅ SSL gerado (Origin CA)
-✅ Containers rodando (docker ps)
-✅ Migrations aplicadas
-✅ Admin criado (admin@gabinete.com)
-✅ Health endpoints OK
-✅ Backup gerado
-```
+Quando o piloto validar o nome "Gadion" (ou outro):
+
+1. Comprar o domínio (ex: gadion.com.br)
+2. Apontar DNS para o mesmo IP
+3. Atualizar `.env`:
+   - `DOMAIN=gadion.com.br`
+   - `AUTH_URL=https://app.gadion.com.br`
+4. Atualizar certificado SSL no Cloudflare
+5. `docker compose -f docker-compose.prod.yml restart app nginx`
 
 ---
 
-## Se algo der errado
+## Checklist por fase
 
-| Sintoma | Provável causa |
-|---|---|
-| `docker ps` vazio | Docker não instalado ou .env inválido |
-| Health endpoint 503 | Banco não pronto ou migration pendente |
-| SSL não funciona | Certificado não copiado para nginx/ssl/ |
-| Porta 80 ocupada | Conflito com serviço existente |
-| Domain não abre | DNS não propagado (aguardar ou verificar Cloudflare) |
+### Fase 1 — IP
 
----
+```
+□ VPS contratada e acessível
+□ Docker + Compose instalados
+□ Projeto clonado
+□ .env criado
+□ Containers rodando
+□ Migrations executadas
+□ Admin criado
+□ Health endpoints OK
+□ Acessível via http://IP:3000
+```
 
-## Próximo passo após deploy
+### Fase 2 — Subdomínio
 
-Semana 2 — Treinamento presencial (roteiro em `docs/TREINAMENTO_PRESENCIAL.md`)
+```
+□ DNS: app.executeempreendimentos.com.br → IP
+□ Cloudflare ativo
+□ .env atualizado com domínio
+□ Certificado SSL (Origin CA) gerado
+□ nginx.conf com SSL descomentado
+□ HTTPS funcionando
+□ Backup testado
+```
+
+### Fase 3 — Domínio próprio
+
+```
+□ Domínio comprado
+□ DNS apontado
+□ .env atualizado
+□ SSL atualizado
+□ Containers reiniciados
+```
