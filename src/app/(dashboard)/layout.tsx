@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { NotificationBell } from "@/components/notification-bell";
 import { FeedbackButton } from "@/components/feedback-button";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard" },
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Templates", href: "/templates" },
   { label: "Fila", href: "/message-queue" },
   { label: "IA", href: "/ai" },
+  { label: "Analytics", href: "/analytics" },
   { label: "Primeiros Passos", href: "/onboarding" },
   { label: "Admin", href: "/admin" },
 ];
@@ -102,6 +104,7 @@ export default async function DashboardLayout({
 
         <main className="flex-1 p-6">{children}</main>
         <FeedbackButton />
+        <AnalyticsTracker />
       </div>
     </div>
   );

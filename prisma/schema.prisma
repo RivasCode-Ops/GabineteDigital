@@ -520,3 +520,19 @@ model MessageQueue {
   @@index([status])
   @@map("message_queue")
 }
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  page      String   @db.VarChar(255)
+  action    String   @db.VarChar(50)
+  label     String?  @db.VarChar(255)
+  sessionId String?  @map("session_id") @db.VarChar(100)
+  duration  Int?
+  userId    String?  @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([page])
+  @@index([action])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
