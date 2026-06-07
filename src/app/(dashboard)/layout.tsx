@@ -18,6 +18,7 @@ const navItems = [
   { label: "Templates", href: "/templates" },
   { label: "Fila", href: "/message-queue" },
   { label: "IA", href: "/ai" },
+  { label: "Primeiros Passos", href: "/onboarding" },
   { label: "Admin", href: "/admin" },
 ];
 
